@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>김비서 대시보드</title>
+  <script>
+    (function(){ const t=localStorage.getItem('theme')||'light'; document.documentElement.setAttribute('data-theme',t); })();
+  </script>
+  <style>
+    :root {
+      --bg-body: linear-gradient(145deg,#fff8f0 0%,#fef3e2 45%,#fff0f5 100%);
+      --orb1: rgba(245,158,11,0.22);
+      --orb2: rgba(251,113,133,0.16);
+      --orb3: rgba(234,179,8,0.18);
+      --glass: rgba(255,252,240,0.62);
+      --glass-border: rgba(245,210,140,0.65);
+      --glass-shadow: 0 8px 32px rgba(180,100,20,0.10), 0 2px 8px rgba(0,0,0,0.04);
+      --glass-blur: blur(22px) saturate(200%);
+      --t1: #2d1a08;
+      --t2: #78614a;
+      --t3: #b8a090;
+      --a1: #d97706;
+      --a2: #92400e;
+      --a-grad: linear-gradient(135deg,#f59e0b,#d97706);
+      --badge-bg: rgba(245,158,11,0.12);
+      --badge-c: #b45309;
+      --toggle-bg: rgba(255,248,235,0.60);
+      --toggle-border: rgba(245,210,140,0.70);
+      --row-hover: rgba(245,158,11,0.06);
+      --divider: rgba(180,100,20,0.08);
+      --scroll-thumb: rgba(180,130,60,0.22);
+      --bread-op: 0.18;
+      /* Priority */
+      --p-hi-bg:rgba(239,68,68,0.10);   --p-hi-c:#dc2626;
+      --p-md-bg:rgba(245,158,11,0.12);  --p-md-c:#b45309;
+      --p-lo-bg:rgba(34,197,94,0.10);   --p-lo-c:#16a34a;
+      --s-prog-bg:rgba(245,158,11,0.12);--s-prog-c:#d97706;
+      --s-wait-bg:rgba(180,150,100,0.10);--s-wait-c:#78614a;
+      --s-done-bg:rgba(34,197,94,0.10); --s-done-c:#16a34a;
+      /* Sched */
+      --d-mon:rgba(245,158,11,0.09);
+      --d-tue:rgba(251,113,133,0.09);
+      --d-wed:rgba(34,197,94,0.09);
+      --d-thu:rgba(139,92,246,0.09);
+      --d-fri:rgba(251,191,36,0.10);
+    }
+    [data-theme="dark"] {
+      --bg-body:#1a0f05;
+      --orb1:rgba(245,158,11,0.30);
+      --orb2:rgba(251,113,133,0.22);
+      --orb3:rgba(234,179,8,0.25);
+      --glass:rgba(255,230,170,0.05);
+      --glass-border:rgba(255,200,110,0.12);
+      --glass-shadow:0 8px 40px rgba(0,0,0,0.55),0 2px 8px rgba(0,0,0,0.35);
+      --t1:#f5e6d3;
+      --t2:#c4a882;
+      --t3:#6b5040;
+      --a1:#fbbf24;
+      --a2:#f59e0b;
+      --a-grad:linear-gradient(135deg,#fbbf24,#f59e0b);
+      --badge-bg:rgba(251,191,36,0.14);
+      --badge-c:#fbbf24;
+      --toggle-bg:rgba(255,220,150,0.08);
+      --toggle-border:rgba(255,200,110,0.15);
+      --row-hover:rgba(251,191,36,0.07);
+      --divider:rgba(255,200,110,0.10);
+      --scroll-thumb:rgba(200,160,80,0.20);
+      --bread-op:0.10;
+      --p-hi-bg:rgba(239,68,68,0.14);  --p-hi-c:#f87171;
+      --p-md-bg:rgba(251,146,60,0.14); --p-md-c:#fb923c;
+      --p-lo-bg:rgba(74,222,128,0.12); --p-lo-c:#4ade80;
+      --s-prog-bg:rgba(251,191,36,0.14);--s-prog-c:#fbbf24;
+      --s-wait-bg:rgba(150,130,100,0.12);--s-wait-c:#a08060;
+      --s-done-bg:rgba(74,222,128,0.12);--s-done-c:#4ade80;
+      --d-mon:rgba(251,191,36,0.12);
+      --d-tue:rgba(251,113,133,0.12);
+      --d-wed:rgba(34,197,94,0.12);
+      --d-thu:rgba(139,92,246,0.12);
+      --d-fri:rgba(245,158,11,0.14);
+    }
+
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    html,body{height:100%;}
+    body{
+      font-family:'Apple SD Gothic Neo','Pretendard','Noto Sans KR',sans-serif;
+      background:var(--bg-body);
+      min-height:100vh;
+      display:flex; flex-direction:column;
+      overflow:hidden;
+      transition:background 0.5s;
+    }
+    [data-theme="dark"] body{background:#1a0f05;}
+
+    /* ── Orbs ── */
+    .orb{position:fixed;border-radius:50%;filter:blur(90px);pointer-events:none;z-index:0;}
+    .orb-1{width:650px;height:650px;background:radial-gradient(circle,var(--orb1),transparent 70%);top:-220px;right:-180px;animation:drift1 18s ease-in-out infinite;}
+    .orb-2{width:550px;height:550px;background:radial-gradient(circle,var(--orb2),transparent 70%);bottom:-180px;left:-160px;animation:drift2 22s ease-in-out infinite;}
+    .orb-3{width:400px;height:400px;background:radial-gradient(circle,var(--orb3),transparent 70%);top:40%;left:35%;animation:drift3 16s ease-in-out infinite;}
+    @keyframes drift1{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(35px,-28px) scale(1.05)}66%{transform:translate(-22px,18px) scale(0.97)}}
+    @keyframes drift2{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-30px,22px) scale(1.04)}66%{transform:translate(25px,-18px) scale(0.97)}}
+    @keyframes drift3{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(18px,-26px) scale(1.07)}}
+
+    /* ── Floating bread ── */
+    .bread{position:fixed;pointer-events:none;z-index:1;opacity:var(--bread-op);line-height:1;user-select:none;transition:opacity 0.3s;}
+    .b1{font-size:40px;top:5%;left:3%;transform:rotate(-18deg);animation:bf 7s ease-in-out infinite;}
+    .b2{font-size:28px;top:10%;right:5%;transform:rotate(12deg);animation:bf 9s ease-in-out infinite 1.2s;}
+    .b3{font-size:36px;top:52%;left:1.5%;transform:rotate(8deg);animation:bf 8s ease-in-out infinite 0.5s;}
+    .b4{font-size:26px;top:70%;right:3%;transform:rotate(-10deg);animation:bf 10s ease-in-out infinite 2s;}
+    .b5{font-size:44px;bottom:6%;left:16%;transform:rotate(20deg);animation:bf 7.5s ease-in-out infinite 0.8s;}
+    .b6{font-size:22px;top:30%;right:2.5%;transform:rotate(-8deg);animation:bf 11s ease-in-out infinite 1.5s;}
+    .b7{font-size:34px;bottom:16%;right:12%;transform:rotate(15deg);animation:bf 8.5s ease-in-out infinite 0.3s;}
+    .b8{font-size:20px;top:42%;left:3.5%;transform:rotate(-22deg);animation:bf 12s ease-in-out infinite 3s;}
+    @keyframes bf{0%,100%{}50%{translate:0 -9px;}}
+
+    /* ── Header ── */
+    header{
+      position:relative;z-index:10;
+      display:flex;align-items:center;gap:14px;
+      padding:14px 22px;
+      margin:14px 20px 0;
+      background:var(--glass);
+      backdrop-filter:var(--glass-blur);
+      -webkit-backdrop-filter:var(--glass-blur);
+      border:1px solid var(--glass-border);
+      border-radius:20px;
+      box-shadow:var(--glass-shadow);
+      transition:background 0.4s,border-color 0.4s;
+      animation:fadeDown 0.5s ease both;
+    }
+    @keyframes fadeDown{from{opacity:0;transform:translateY(-12px)}to{opacity:1;transform:translateY(0)}}
+
+    .back-link{
+      display:inline-flex;align-items:center;gap:6px;
+      color:var(--a1);font-size:13px;font-weight:700;
+      text-decoration:none;
+      padding:6px 13px;border-radius:10px;
+      border:1px solid var(--glass-border);
+      background:var(--badge-bg);
+      transition:background 0.2s,transform 0.2s;
+      white-space:nowrap;
+    }
+    .back-link:hover{background:rgba(245,158,11,0.18);transform:translateX(-2px);}
+
+    .header-logo{font-size:20px;filter:drop-shadow(0 2px 4px rgba(180,100,20,0.2));}
+    .header-title{font-size:17px;font-weight:800;color:var(--t1);letter-spacing:-0.01em;transition:color 0.4s;}
+    .header-date{font-size:12px;color:var(--t3);transition:color 0.4s;}
+    .header-spacer{flex:1;}
+
+    .theme-toggle{
+      width:56px;height:28px;border-radius:14px;
+      border:1px solid var(--glass-border);
+      background:var(--toggle-bg);cursor:pointer;
+      display:flex;align-items:center;padding:3px;
+      transition:all 0.3s;
+    }
+    .toggle-thumb{
+      width:20px;height:20px;border-radius:50%;
+      background:var(--a-grad);
+      display:flex;align-items:center;justify-content:center;
+      font-size:11px;
+      box-shadow:0 2px 6px rgba(0,0,0,0.22);
+      transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1);flex-shrink:0;
+    }
+    [data-theme="dark"] .toggle-thumb{transform:translateX(28px);}
+
+    /* ── Nav bar ── */
+    .nav-bar{
+      position:relative;z-index:10;
+      display:flex;align-items:center;gap:5px;
+      padding:7px 10px;
+      margin:8px 20px 0;
+      background:var(--glass);
+      backdrop-filter:var(--glass-blur);
+      -webkit-backdrop-filter:var(--glass-blur);
+      border:1px solid var(--glass-border);
+      border-radius:16px;
+      box-shadow:var(--glass-shadow);
+      transition:background 0.4s,border-color 0.4s;
+      animation:fadeDown 0.6s ease 0.07s both;
+      overflow-x:auto;
+      scrollbar-width:none;
+    }
+    .nav-bar::-webkit-scrollbar{height:0;}
+    .nav-tab{
+      display:inline-flex;align-items:center;gap:6px;
+      font-size:13px;font-weight:700;
+      padding:7px 15px;border-radius:11px;
+      border:none;cursor:pointer;
+      text-decoration:none;
+      white-space:nowrap;
+      background:transparent;
+      color:var(--t2);
+      font-family:inherit;
+      transition:background 0.2s,color 0.2s,transform 0.15s,box-shadow 0.2s;
+    }
+    .nav-tab:hover{
+      background:var(--badge-bg);
+      color:var(--a1);
+      transform:translateY(-1px);
+    }
+    .nav-tab.active{
+      background:var(--a-grad);
+      color:#fff;
+      box-shadow:0 3px 14px rgba(217,119,6,0.28);
+    }
+    [data-theme="dark"] .nav-tab.active{box-shadow:0 3px 14px rgba(251,191,36,0.22);}
+    .nav-tab-icon{font-size:13px;line-height:1;}
+    .nav-sep{width:1px;height:18px;background:var(--glass-border);flex-shrink:0;margin:0 2px;}
+
+    /* ── Grid ── */
+    .grid{
+      position:relative;z-index:10;
+      display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;
+      gap:14px;padding:14px 20px 20px;
+      flex:1;min-height:0;
+      animation:fadeUp 0.55s ease 0.1s both;
+    }
+    @keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+    /* ── Glass Card ── */
+    .card{
+      background:var(--glass);
+      backdrop-filter:var(--glass-blur);
+      -webkit-backdrop-filter:var(--glass-blur);
+      border:1px solid var(--glass-border);
+      border-radius:22px;
+      box-shadow:var(--glass-shadow);
+      padding:18px 18px 14px;
+      display:flex;flex-direction:column;
+      overflow:hidden;
+      transition:background 0.4s,border-color 0.4s;
+      min-height:0;
+    }
+
+    .card-header{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-shrink:0;}
+    .card-icon{
+      width:38px;height:38px;border-radius:12px;
+      background:var(--badge-bg);
+      border:1px solid var(--glass-border);
+      display:flex;align-items:center;justify-content:center;
+      font-size:19px;flex-shrink:0;
+    }
+    .card-title{font-size:14.5px;font-weight:800;color:var(--t1);transition:color 0.4s;}
+    .card-count{
+      margin-left:auto;font-size:11px;color:var(--t3);font-weight:600;
+      background:var(--badge-bg);padding:3px 10px;border-radius:999px;
+      border:1px solid var(--glass-border);white-space:nowrap;transition:color 0.4s;
+    }
+
+    .card-body{overflow-y:auto;flex:1;min-height:0;padding-right:3px;}
+    .card-body::-webkit-scrollbar{width:3px;}
+    .card-body::-webkit-scrollbar-track{background:transparent;}
+    .card-body::-webkit-scrollbar-thumb{background:var(--scroll-thumb);border-radius:2px;}
+
+    /* ── Pill badges ── */
+    .pill{display:inline-block;font-size:10.5px;font-weight:700;padding:2px 9px;border-radius:999px;white-space:nowrap;}
+    .p-hi{background:var(--p-hi-bg);color:var(--p-hi-c);}
+    .p-md{background:var(--p-md-bg);color:var(--p-md-c);}
+    .p-lo{background:var(--p-lo-bg);color:var(--p-lo-c);}
+    .s-prog{background:var(--s-prog-bg);color:var(--s-prog-c);}
+    .s-wait{background:var(--s-wait-bg);color:var(--s-wait-c);}
+    .s-done{background:var(--s-done-bg);color:var(--s-done-c);}
+    .st-active{background:var(--s-prog-bg);color:var(--s-prog-c);}
+    .st-finish{background:var(--s-done-bg);color:var(--s-done-c);}
+    .st-ready{background:var(--p-md-bg);color:var(--p-md-c);}
+    .st-plan{background:var(--s-wait-bg);color:var(--s-wait-c);}
+
+    /* ━━ 1. 할 일 ━━ */
+    .todo-list{display:flex;flex-direction:column;gap:5px;}
+    .todo-item{
+      display:flex;align-items:center;gap:9px;
+      padding:8px 10px;border-radius:11px;
+      border:1px solid transparent;
+      transition:background 0.18s,border-color 0.18s;
+    }
+    .todo-item:hover{background:var(--row-hover);border-color:var(--glass-border);}
+    .todo-item.done{opacity:0.42;}
+    .todo-item.done .todo-text{text-decoration:line-through;}
+    .todo-item input[type="checkbox"]{width:15px;height:15px;accent-color:var(--a1);flex-shrink:0;cursor:pointer;}
+    .todo-text{flex:1;font-size:12.5px;color:var(--t1);transition:color 0.4s;}
+
+    /* ━━ 2. 일정 ━━ */
+    .sched-table{width:100%;border-collapse:separate;border-spacing:3px 0;font-size:11px;}
+    .sched-table th{
+      text-align:center;padding:6px 3px 8px;
+      font-size:10.5px;font-weight:800;color:var(--t2);
+      border-bottom:2px solid var(--divider);white-space:nowrap;
+    }
+    .sched-table td{vertical-align:top;padding:3px 2px;}
+    .sched-event{padding:5px 6px;border-radius:8px;margin-bottom:3px;transition:opacity 0.2s;}
+    .sched-event:hover{opacity:0.78;}
+    .sched-time{font-size:9.5px;font-weight:700;margin-bottom:1px;}
+    .sched-name{font-size:10.5px;color:var(--t1);line-height:1.3;transition:color 0.4s;}
+    .ev-mon{background:var(--d-mon);}  .tm-mon{color:#d97706;}
+    .ev-tue{background:var(--d-tue);}  .tm-tue{color:#e11d48;}
+    .ev-wed{background:var(--d-wed);}  .tm-wed{color:#16a34a;}
+    .ev-thu{background:var(--d-thu);}  .tm-thu{color:#7c3aed;}
+    .ev-fri{background:var(--d-fri);}  .tm-fri{color:#b45309;}
+
+    /* ━━ 3. 프로젝트 ━━ */
+    .project-list{display:flex;flex-direction:column;gap:11px;}
+    .project-item{
+      padding:10px 12px;border-radius:12px;
+      border:1px solid var(--glass-border);
+      background:color-mix(in srgb,var(--glass) 60%,transparent);
+      transition:background 0.2s;
+    }
+    .project-item:hover{background:var(--row-hover);}
+    .proj-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:7px;gap:8px;}
+    .proj-name{font-size:12.5px;font-weight:700;color:var(--t1);transition:color 0.4s;}
+    .proj-right{display:flex;align-items:center;gap:7px;}
+    .proj-pct{font-size:13px;font-weight:800;color:var(--a1);min-width:32px;text-align:right;}
+    .proj-track{height:6px;background:var(--divider);border-radius:999px;overflow:hidden;margin-bottom:5px;}
+    .proj-fill{
+      height:100%;border-radius:999px;
+      background:var(--a-grad);
+      transform-origin:left;transform:scaleX(0);
+      transition:transform 1s cubic-bezier(0.4,0,0.2,1);
+    }
+    .proj-fill.green{background:linear-gradient(90deg,#22c55e,#4ade80);}
+    .proj-fill.orange{background:linear-gradient(90deg,#f97316,#fb923c);}
+    .proj-meta{display:flex;justify-content:space-between;font-size:10.5px;color:var(--t3);transition:color 0.4s;}
+
+    /* ━━ 4. 매출 ━━ */
+    .sales-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:10px;}
+    .sales-card{
+      padding:13px 13px 11px;border-radius:14px;
+      border:1px solid var(--glass-border);
+      background:color-mix(in srgb,var(--glass) 70%,transparent);
+      transition:background 0.2s,transform 0.2s;
+    }
+    .sales-card:hover{transform:translateY(-2px);}
+    .sales-card.accent{background:var(--a-grad);border-color:transparent;}
+    .sales-lbl{font-size:11px;color:var(--t3);margin-bottom:4px;transition:color 0.4s;}
+    .sales-card.accent .sales-lbl{color:rgba(255,255,255,0.72);}
+    .sales-val{font-size:21px;font-weight:900;color:var(--t1);line-height:1.1;transition:color 0.4s;}
+    .sales-val sub{font-size:12px;font-weight:500;color:var(--t3);vertical-align:baseline;transition:color 0.4s;}
+    .sales-card.accent .sales-val{color:#fff;}
+    .sales-card.accent .sales-val sub{color:rgba(255,255,255,0.68);}
+    .sales-sub{font-size:10.5px;color:var(--t3);margin-top:3px;transition:color 0.4s;}
+    .sales-card.accent .sales-sub{color:rgba(255,255,255,0.62);}
+    .sales-footer{
+      padding:9px 12px;border-radius:11px;
+      border:1px solid var(--glass-border);
+      background:color-mix(in srgb,var(--glass) 50%,transparent);
+      font-size:11.5px;color:var(--t2);line-height:1.75;transition:all 0.4s;
+    }
+    .sales-footer strong{color:var(--a1);font-weight:700;}
+  </style>
+</head>
+<body>
+
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <!-- Floating bread decorations -->
+  <div class="bread b1">🥐</div>
+  <div class="bread b2">☕</div>
+  <div class="bread b3">🧁</div>
+  <div class="bread b4">🍩</div>
+  <div class="bread b5">🍞</div>
+  <div class="bread b6">🥖</div>
+  <div class="bread b7">🫖</div>
+  <div class="bread b8">🍪</div>
+
+  <!-- Header -->
+  <header>
+    <a href="index.html" class="back-link">← 메인</a>
+    <span class="header-logo">☕</span>
+    <span class="header-title">업무 대시보드</span>
+    <span class="header-date">2026년 3월 10일 (월)</span>
+    <div class="header-spacer"></div>
+    <button class="theme-toggle" id="themeToggle" title="테마 전환">
+      <div class="toggle-thumb" id="toggleThumb">☀️</div>
+    </button>
+  </header>
+
+  <!-- Navigation -->
+  <nav class="nav-bar">
+    <button class="nav-tab active">
+      <span class="nav-tab-icon">📊</span>대시보드
+    </button>
+    <div class="nav-sep"></div>
+    <a href="meeting-result.html" class="nav-tab">
+      <span class="nav-tab-icon">📋</span>회의록
+    </a>
+    <a href="chart.html" class="nav-tab">
+      <span class="nav-tab-icon">📈</span>매출 현황
+    </a>
+    <a href="diagram.svg" class="nav-tab">
+      <span class="nav-tab-icon">🔄</span>업무 프로세스
+    </a>
+    <a href="report.html" class="nav-tab">
+      <span class="nav-tab-icon">🔍</span>사이트 분석
+    </a>
+  </nav>
+
+  <!-- 2×2 Grid -->
+  <div class="grid">
+
+    <!-- 1. 할 일 목록 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">🗒️</div>
+        <span class="card-title">할 일 목록</span>
+        <span class="card-count">10개 업무</span>
+      </div>
+      <div class="card-body">
+        <div class="todo-list">
+          <div class="todo-item"><input type="checkbox"><span class="todo-text">3월 프로모션 기획안 작성</span><span class="pill p-hi">높음</span><span class="pill s-prog">진행중</span></div>
+          <div class="todo-item"><input type="checkbox"><span class="todo-text">파트너사 계약서 검토</span><span class="pill p-hi">높음</span><span class="pill s-wait">대기</span></div>
+          <div class="todo-item"><input type="checkbox"><span class="todo-text">인플루언서 미팅 일정 잡기</span><span class="pill p-hi">높음</span><span class="pill s-wait">대기</span></div>
+          <div class="todo-item"><input type="checkbox"><span class="todo-text">고객 설문조사 결과 분석</span><span class="pill p-md">보통</span><span class="pill s-prog">진행중</span></div>
+          <div class="todo-item"><input type="checkbox"><span class="todo-text">영상 광고 3개 추가 제작</span><span class="pill p-md">보통</span><span class="pill s-prog">진행중</span></div>
+          <div class="todo-item"><input type="checkbox"><span class="todo-text">4월 신제품 티저 콘텐츠 기획</span><span class="pill p-hi">높음</span><span class="pill s-wait">대기</span></div>
+          <div class="todo-item"><input type="checkbox"><span class="todo-text">경쟁사 C사 캠페인 분석</span><span class="pill p-md">보통</span><span class="pill s-wait">대기</span></div>
+          <div class="todo-item"><input type="checkbox"><span class="todo-text">월간 마케팅 보고서 작성</span><span class="pill p-hi">높음</span><span class="pill s-wait">대기</span></div>
+          <div class="todo-item"><input type="checkbox"><span class="todo-text">블로그 포스트 2건 작성</span><span class="pill p-lo">낮음</span><span class="pill s-wait">대기</span></div>
+          <div class="todo-item done"><input type="checkbox" checked><span class="todo-text">SNS 계정 주간 콘텐츠 업로드</span><span class="pill p-md">보통</span><span class="pill s-done">완료</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. 이번 주 일정 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">🗓️</div>
+        <span class="card-title">이번 주 일정</span>
+        <span class="card-count">3/10 – 3/14</span>
+      </div>
+      <div class="card-body">
+        <table class="sched-table">
+          <thead>
+            <tr>
+              <th>월 3/10</th><th>화 3/11</th><th>수 3/12</th><th>목 3/13</th><th>금 3/14</th>
+            </tr>
+          </thead>
+          <tbody><tr>
+            <td>
+              <div class="sched-event ev-mon"><div class="sched-time tm-mon">10:00</div><div class="sched-name">마케팅팀 주간회의</div></div>
+              <div class="sched-event ev-mon"><div class="sched-time tm-mon">14:00</div><div class="sched-name">신제품 런칭 킥오프</div></div>
+            </td>
+            <td>
+              <div class="sched-event ev-tue"><div class="sched-time tm-tue">09:00</div><div class="sched-name">프로모션 기획안 마감</div></div>
+              <div class="sched-event ev-tue"><div class="sched-time tm-tue">11:00</div><div class="sched-name">디자인팀 협업 미팅</div></div>
+              <div class="sched-event ev-tue"><div class="sched-time tm-tue">15:00</div><div class="sched-name">파트너사 계약서 검토</div></div>
+              <div class="sched-event ev-tue"><div class="sched-time tm-tue">19:00</div><div class="sched-name">클로드 코드 워크숍</div></div>
+            </td>
+            <td>
+              <div class="sched-event ev-wed"><div class="sched-time tm-wed">10:00</div><div class="sched-name">인플루언서 미팅</div></div>
+              <div class="sched-event ev-wed"><div class="sched-time tm-wed">14:00</div><div class="sched-name">고객 설문 결과 공유</div></div>
+              <div class="sched-event ev-wed"><div class="sched-time tm-wed">16:00</div><div class="sched-name">콘텐츠 편집 회의</div></div>
+            </td>
+            <td>
+              <div class="sched-event ev-thu"><div class="sched-time tm-thu">09:30</div><div class="sched-name">영상 광고 촬영</div></div>
+              <div class="sched-event ev-thu"><div class="sched-time tm-thu">13:00</div><div class="sched-name">점심 — 광고 대행사</div></div>
+              <div class="sched-event ev-thu"><div class="sched-time tm-thu">15:00</div><div class="sched-name">SNS 콘텐츠 리뷰</div></div>
+            </td>
+            <td>
+              <div class="sched-event ev-fri"><div class="sched-time tm-fri">10:00</div><div class="sched-name">유튜브 채널 최종 검토</div></div>
+              <div class="sched-event ev-fri"><div class="sched-time tm-fri">14:00</div><div class="sched-name">주간 성과 리뷰</div></div>
+              <div class="sched-event ev-fri"><div class="sched-time tm-fri">16:00</div><div class="sched-name">콘텐츠 캘린더 확정</div></div>
+            </td>
+          </tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- 3. 프로젝트 진행률 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">🥐</div>
+        <span class="card-title">프로젝트 진행률</span>
+        <span class="card-count">6개 프로젝트</span>
+      </div>
+      <div class="card-body">
+        <div class="project-list">
+          <div class="project-item">
+            <div class="proj-header"><span class="proj-name">유튜브 채널 리뉴얼</span><div class="proj-right"><span class="proj-pct">80%</span><span class="pill st-finish">마무리</span></div></div>
+            <div class="proj-track"><div class="proj-fill green" data-pct="0.80"></div></div>
+            <div class="proj-meta"><span>박사원 · ~3/15</span><span>120 / 150만원</span></div>
+          </div>
+          <div class="project-item">
+            <div class="proj-header"><span class="proj-name">봄맞이 프로모션</span><div class="proj-right"><span class="proj-pct">65%</span><span class="pill st-active">진행중</span></div></div>
+            <div class="proj-track"><div class="proj-fill" data-pct="0.65"></div></div>
+            <div class="proj-meta"><span>김대리 · ~3/31</span><span>325 / 500만원</span></div>
+          </div>
+          <div class="project-item">
+            <div class="proj-header"><span class="proj-name">홈페이지 리뉴얼</span><div class="proj-right"><span class="proj-pct">45%</span><span class="pill st-active">진행중</span></div></div>
+            <div class="proj-track"><div class="proj-fill" data-pct="0.45"></div></div>
+            <div class="proj-meta"><span>이과장 · ~4/15</span><span>270 / 600만원</span></div>
+          </div>
+          <div class="project-item">
+            <div class="proj-header"><span class="proj-name">인플루언서 협업</span><div class="proj-right"><span class="proj-pct">35%</span><span class="pill st-active">진행중</span></div></div>
+            <div class="proj-track"><div class="proj-fill" data-pct="0.35"></div></div>
+            <div class="proj-meta"><span>이과장 · ~3/28</span><span>105 / 300만원</span></div>
+          </div>
+          <div class="project-item">
+            <div class="proj-header"><span class="proj-name">신제품 런칭 캠페인</span><div class="proj-right"><span class="proj-pct">20%</span><span class="pill st-ready">준비중</span></div></div>
+            <div class="proj-track"><div class="proj-fill orange" data-pct="0.20"></div></div>
+            <div class="proj-meta"><span>정팀장 · ~4/30</span><span>240 / 1,200만원</span></div>
+          </div>
+          <div class="project-item">
+            <div class="proj-header"><span class="proj-name">고객 리텐션 프로그램</span><div class="proj-right"><span class="proj-pct">10%</span><span class="pill st-plan">기획중</span></div></div>
+            <div class="proj-track"><div class="proj-fill orange" data-pct="0.10"></div></div>
+            <div class="proj-meta"><span>정팀장 · ~5/31</span><span>80 / 800만원</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 4. 매출 요약 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">🧁</div>
+        <span class="card-title">매출 요약</span>
+        <span class="card-count">2026년 1–2월</span>
+      </div>
+      <div class="card-body">
+        <div class="sales-grid">
+          <div class="sales-card accent">
+            <div class="sales-lbl">전체 누적 매출</div>
+            <div class="sales-val">7,101<sub>만원</sub></div>
+            <div class="sales-sub">1월 + 2월 합산</div>
+          </div>
+          <div class="sales-card">
+            <div class="sales-lbl">1월 매출</div>
+            <div class="sales-val">4,650<sub>만원</sub></div>
+            <div class="sales-sub">21건 거래</div>
+          </div>
+          <div class="sales-card">
+            <div class="sales-lbl">2월 매출</div>
+            <div class="sales-val">2,451<sub>만원</sub></div>
+            <div class="sales-sub">9건 거래 (집계 중)</div>
+          </div>
+          <div class="sales-card">
+            <div class="sales-lbl">베스트 제품</div>
+            <div class="sales-val" style="font-size:17px;line-height:1.3">무선<br>이어폰</div>
+            <div class="sales-sub">2,884만원 · 1위</div>
+          </div>
+        </div>
+        <div class="sales-footer">
+          <strong>카테고리</strong>&nbsp; 전자기기 5,508만원 (77.5%)&nbsp;·&nbsp;생활용품 1,593만원 (22.5%)<br>
+          <strong>지역</strong>&nbsp; 서울 1위&nbsp;·&nbsp;부산 2위&nbsp;·&nbsp;대구 3위
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    const toggle=document.getElementById('themeToggle');
+    const thumb=document.getElementById('toggleThumb');
+    function applyTheme(t){
+      document.documentElement.setAttribute('data-theme',t);
+      thumb.textContent=t==='dark'?'☀️':'🌙';
+    }
+    applyTheme(localStorage.getItem('theme')||'light');
+    toggle.addEventListener('click',()=>{
+      const next=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';
+      localStorage.setItem('theme',next); applyTheme(next);
+    });
+
+    requestAnimationFrame(()=>{
+      setTimeout(()=>{
+        document.querySelectorAll('.proj-fill').forEach(el=>{
+          el.style.transform=`scaleX(${el.dataset.pct})`;
+        });
+      },200);
+    });
+  </script>
+</body>
+</html>

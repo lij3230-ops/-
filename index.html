@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="ko" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>김비서를 소개합니다</title>
+  <script>
+    (function(){ const t=localStorage.getItem('theme')||'light'; document.documentElement.setAttribute('data-theme',t); })();
+  </script>
+  <style>
+    :root {
+      --bg-body: linear-gradient(145deg, #fff8f0 0%, #fef3e2 45%, #fff0f5 100%);
+      --orb1: rgba(245,158,11,0.22);
+      --orb2: rgba(251,113,133,0.16);
+      --orb3: rgba(234,179,8,0.18);
+      --glass: rgba(255,252,240,0.62);
+      --glass-border: rgba(245,210,140,0.65);
+      --glass-shadow: 0 8px 32px rgba(180,100,20,0.10), 0 2px 8px rgba(0,0,0,0.04);
+      --t1: #2d1a08;
+      --t2: #78614a;
+      --t3: #b8a090;
+      --a1: #d97706;
+      --a2: #92400e;
+      --a-grad: linear-gradient(135deg,#f59e0b,#d97706);
+      --btn-shadow: 0 6px 24px rgba(217,119,6,0.38);
+      --badge-bg: rgba(245,158,11,0.12);
+      --badge-c: #b45309;
+      --toggle-bg: rgba(255,248,235,0.60);
+      --toggle-border: rgba(245,210,140,0.70);
+      --bread-op: 0.22;
+      --icon-bg: rgba(245,158,11,0.10);
+    }
+    [data-theme="dark"] {
+      --bg-body: #1a0f05;
+      --orb1: rgba(245,158,11,0.30);
+      --orb2: rgba(251,113,133,0.22);
+      --orb3: rgba(234,179,8,0.25);
+      --glass: rgba(255,230,170,0.05);
+      --glass-border: rgba(255,200,110,0.12);
+      --glass-shadow: 0 8px 40px rgba(0,0,0,0.55), 0 2px 8px rgba(0,0,0,0.35);
+      --t1: #f5e6d3;
+      --t2: #c4a882;
+      --t3: #6b5040;
+      --a1: #fbbf24;
+      --a2: #f59e0b;
+      --a-grad: linear-gradient(135deg,#fbbf24,#f59e0b);
+      --btn-shadow: 0 6px 28px rgba(251,191,36,0.35);
+      --badge-bg: rgba(251,191,36,0.14);
+      --badge-c: #fbbf24;
+      --toggle-bg: rgba(255,220,150,0.08);
+      --toggle-border: rgba(255,200,110,0.15);
+      --bread-op: 0.12;
+      --icon-bg: rgba(251,191,36,0.12);
+    }
+
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+
+    body {
+      font-family:'Apple SD Gothic Neo','Pretendard','Noto Sans KR',sans-serif;
+      min-height:100vh;
+      background: var(--bg-body);
+      display:flex; align-items:center; justify-content:center;
+      padding:40px 20px;
+      overflow:hidden; position:relative;
+      transition: background 0.5s;
+    }
+    [data-theme="dark"] body { background: #1a0f05; }
+
+    /* ── Orbs ── */
+    .orb { position:fixed; border-radius:50%; filter:blur(90px); pointer-events:none; z-index:0; }
+    .orb-1 { width:650px;height:650px; background:radial-gradient(circle,var(--orb1),transparent 70%); top:-220px;right:-180px; animation:drift1 18s ease-in-out infinite; }
+    .orb-2 { width:550px;height:550px; background:radial-gradient(circle,var(--orb2),transparent 70%); bottom:-180px;left:-160px; animation:drift2 22s ease-in-out infinite; }
+    .orb-3 { width:400px;height:400px; background:radial-gradient(circle,var(--orb3),transparent 70%); top:38%;left:32%; animation:drift3 16s ease-in-out infinite; }
+    @keyframes drift1{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(35px,-28px) scale(1.05)}66%{transform:translate(-22px,18px) scale(0.97)}}
+    @keyframes drift2{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-30px,22px) scale(1.04)}66%{transform:translate(25px,-18px) scale(0.97)}}
+    @keyframes drift3{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(18px,-26px) scale(1.07)}}
+
+    /* ── Floating bread decorations ── */
+    .bread { position:fixed; pointer-events:none; z-index:1; opacity:var(--bread-op); line-height:1; user-select:none; }
+    .b1  { font-size:46px; top:6%;  left:4%;  transform:rotate(-18deg); animation:bf 7s ease-in-out infinite; }
+    .b2  { font-size:32px; top:12%; right:6%; transform:rotate(12deg);  animation:bf 9s ease-in-out infinite 1.2s; }
+    .b3  { font-size:38px; top:55%; left:2%;  transform:rotate(8deg);   animation:bf 8s ease-in-out infinite 0.5s; }
+    .b4  { font-size:28px; top:72%; right:4%; transform:rotate(-10deg); animation:bf 10s ease-in-out infinite 2s; }
+    .b5  { font-size:52px; bottom:8%; left:18%; transform:rotate(20deg); animation:bf 7.5s ease-in-out infinite 0.8s; }
+    .b6  { font-size:24px; top:32%; right:3%;  transform:rotate(-8deg);  animation:bf 11s ease-in-out infinite 1.5s; }
+    .b7  { font-size:40px; bottom:18%; right:14%; transform:rotate(15deg); animation:bf 8.5s ease-in-out infinite 0.3s; }
+    .b8  { font-size:22px; top:42%; left:5%;  transform:rotate(-22deg); animation:bf 12s ease-in-out infinite 3s; }
+    .b9  { font-size:34px; top:20%; left:38%; transform:rotate(6deg);   animation:bf 9.5s ease-in-out infinite 2.5s; }
+    .b10 { font-size:26px; bottom:28%; left:6%; transform:rotate(-14deg); animation:bf 6.5s ease-in-out infinite 1s; }
+    @keyframes bf {
+      0%,100%{ transform-origin:center; filter:blur(0); }
+      50%{ translate:0 -10px; }
+    }
+    .b1:hover,.b2:hover,.b3:hover,.b4:hover,.b5:hover,.b6:hover,
+    .b7:hover,.b8:hover,.b9:hover,.b10:hover { opacity:0.5; }
+
+    /* ── Theme Toggle ── */
+    .theme-toggle {
+      position:fixed; top:20px; right:20px; z-index:200;
+      width:58px; height:30px; border-radius:15px;
+      border:1px solid var(--glass-border);
+      background:var(--toggle-bg); cursor:pointer;
+      display:flex; align-items:center; padding:3px;
+      transition:all 0.3s; box-shadow:var(--glass-shadow);
+    }
+    .toggle-thumb {
+      width:22px; height:22px; border-radius:50%;
+      background:var(--a-grad);
+      display:flex; align-items:center; justify-content:center;
+      font-size:12px; box-shadow:0 2px 8px rgba(0,0,0,0.22);
+      transition:transform 0.35s cubic-bezier(0.34,1.56,0.64,1); flex-shrink:0;
+    }
+    [data-theme="dark"] .toggle-thumb { transform:translateX(28px); }
+
+    /* ── Main ── */
+    .container { position:relative; z-index:10; max-width:760px; width:100%; text-align:center; }
+    @keyframes fadeUp { from{opacity:0;transform:translateY(26px)} to{opacity:1;transform:translateY(0)} }
+    .fu  { animation:fadeUp 0.7s ease both; }
+    .d1  { animation-delay:0.08s; }
+    .d2  { animation-delay:0.16s; }
+    .d3  { animation-delay:0.26s; }
+    .d4  { animation-delay:0.38s; }
+
+    /* ── Store tag ── */
+    .store-tag {
+      display:inline-flex; align-items:center; gap:8px;
+      background:var(--glass); backdrop-filter:blur(16px);
+      -webkit-backdrop-filter:blur(16px);
+      border:1px solid var(--glass-border);
+      border-radius:999px;
+      padding:7px 20px; margin-bottom:22px;
+      font-size:12.5px; font-weight:700; color:var(--a1);
+      letter-spacing:0.05em;
+      box-shadow:var(--glass-shadow);
+    }
+    .store-dot {
+      width:7px; height:7px; border-radius:50%;
+      background:var(--a-grad);
+      animation:pulse 2s ease infinite;
+    }
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.55;transform:scale(1.35)}}
+
+    /* ── Heading ── */
+    h1 {
+      font-size:clamp(34px,5.8vw,56px); font-weight:900;
+      color:var(--t1); line-height:1.18; margin-bottom:16px;
+      letter-spacing:-0.02em; transition:color 0.4s;
+    }
+    h1 .hl {
+      background:var(--a-grad);
+      -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+      background-clip:text;
+    }
+    .subtitle { font-size:15.5px; color:var(--t2); line-height:1.78; margin-bottom:50px; transition:color 0.4s; }
+
+    /* ── Feature cards ── */
+    .cards { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; margin-bottom:46px; }
+    .card {
+      background:var(--glass);
+      backdrop-filter:blur(22px) saturate(200%);
+      -webkit-backdrop-filter:blur(22px) saturate(200%);
+      border:1px solid var(--glass-border);
+      border-radius:24px; padding:30px 20px 26px;
+      box-shadow:var(--glass-shadow);
+      transition:transform 0.28s, box-shadow 0.28s, background 0.4s;
+    }
+    .card:hover { transform:translateY(-7px); box-shadow:0 18px 48px rgba(180,100,20,0.15); }
+    [data-theme="dark"] .card:hover { box-shadow:0 18px 48px rgba(0,0,0,0.6); }
+    .card-emoji {
+      font-size:38px; margin-bottom:14px;
+      display:block;
+      filter:drop-shadow(0 3px 8px rgba(180,100,20,0.25));
+      transition:transform 0.25s;
+    }
+    .card:hover .card-emoji { transform:scale(1.12) rotate(-5deg); }
+    .card-title { font-size:15px; font-weight:800; color:var(--t1); margin-bottom:8px; transition:color 0.4s; }
+    .card-desc  { font-size:13px; color:var(--t3); line-height:1.65; transition:color 0.4s; }
+
+    /* ── Decorative divider ── */
+    .divider-row { display:flex; align-items:center; justify-content:center; gap:10px; margin-bottom:28px; }
+    .divider-line { flex:1; max-width:100px; height:1px; background:linear-gradient(90deg,transparent,var(--glass-border)); }
+    .divider-line.r  { background:linear-gradient(90deg,var(--glass-border),transparent); }
+    .divider-icon { font-size:18px; opacity:0.5; }
+
+    /* ── CTA ── */
+    .btn {
+      display:inline-flex; align-items:center; gap:10px;
+      background:var(--a-grad); color:#fff;
+      font-size:17px; font-weight:700;
+      padding:18px 52px; border-radius:18px;
+      text-decoration:none;
+      box-shadow:var(--btn-shadow);
+      transition:transform 0.22s, box-shadow 0.22s;
+      letter-spacing:0.02em;
+    }
+    .btn:hover { transform:translateY(-3px) scale(1.02); box-shadow:0 12px 36px rgba(217,119,6,0.50); }
+    [data-theme="dark"] .btn:hover { box-shadow:0 12px 36px rgba(251,191,36,0.40); }
+    .btn:active { transform:scale(0.98); }
+    .btn-arrow { display:inline-block; transition:transform 0.22s; }
+    .btn:hover .btn-arrow { transform:translateX(5px); }
+  </style>
+</head>
+<body>
+
+  <!-- Orbs -->
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+
+  <!-- Floating bread/cafe decorations -->
+  <div class="bread b1">🥐</div>
+  <div class="bread b2">☕</div>
+  <div class="bread b3">🧁</div>
+  <div class="bread b4">🍩</div>
+  <div class="bread b5">🍞</div>
+  <div class="bread b6">🥖</div>
+  <div class="bread b7">🫖</div>
+  <div class="bread b8">🍪</div>
+  <div class="bread b9">🥛</div>
+  <div class="bread b10">🍰</div>
+
+  <!-- Theme toggle -->
+  <button class="theme-toggle" id="themeToggle" title="테마 전환">
+    <div class="toggle-thumb" id="toggleThumb">☀️</div>
+  </button>
+
+  <div class="container">
+
+    <div class="store-tag fu">
+      <span class="store-dot"></span>
+      ☕ 카페 전용 비서
+    </div>
+
+    <h1 class="fu d1">
+      김비서를<br><span class="hl">소개합니다</span>
+    </h1>
+
+    <p class="subtitle fu d2">
+      바쁜 카페 운영, 이제 김비서가 도와드립니다.<br>
+      할 일부터 일정, 프로젝트, 매출까지 — 놓치는 것 없이 챙겨드립니다.
+    </p>
+
+    <div class="cards">
+      <div class="card fu d2">
+        <span class="card-emoji">🗒️</span>
+        <div class="card-title">매장 업무 관리</div>
+        <div class="card-desc">우선순위별 할 일 목록을 정리하고 진행 상태를 한눈에 파악합니다</div>
+      </div>
+      <div class="card fu d3">
+        <span class="card-emoji">☕</span>
+        <div class="card-title">일정 & 예약 관리</div>
+        <div class="card-desc">주간 일정을 요일별로 구조화해 중요한 미팅을 절대 놓치지 않습니다</div>
+      </div>
+      <div class="card fu d4">
+        <span class="card-emoji">🧁</span>
+        <div class="card-title">매출 분석</div>
+        <div class="card-desc">프로젝트 진행률과 매출 데이터를 시각화해 의사결정을 도와드립니다</div>
+      </div>
+    </div>
+
+    <div class="divider-row fu d4">
+      <div class="divider-line"></div>
+      <span class="divider-icon">🥐</span>
+      <div class="divider-line r"></div>
+    </div>
+
+    <a href="dashboard.html" class="btn fu d4">
+      내 대시보드 보기
+      <span class="btn-arrow">→</span>
+    </a>
+
+  </div>
+
+  <script>
+    const toggle=document.getElementById('themeToggle');
+    const thumb=document.getElementById('toggleThumb');
+    function applyTheme(t){
+      document.documentElement.setAttribute('data-theme',t);
+      thumb.textContent=t==='dark'?'☀️':'🌙';
+    }
+    applyTheme(localStorage.getItem('theme')||'light');
+    toggle.addEventListener('click',()=>{
+      const next=document.documentElement.getAttribute('data-theme')==='dark'?'light':'dark';
+      localStorage.setItem('theme',next); applyTheme(next);
+    });
+  </script>
+</body>
+</html>
