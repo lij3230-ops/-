@@ -1,2 +1,15 @@
+# 환경 변수 / 시크릿
+.env
 .env.local
 .env*.local
+
+# Claude Code 로컬 설정
+.claude/
+
+# OS 임시 파일
+.DS_Store
+Thumbs.db
+
+# 에디터 설정
+.vscode/
+.idea/
